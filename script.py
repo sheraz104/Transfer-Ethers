@@ -3,17 +3,17 @@ from requests import get
 import json
 import struct
 
-# set your coinbase address that you want to withdraw Ethers from.
-# For successful mining of transaction make sure this address is unlocked in your Geth Node.
-coinbase_address = '0xB06cEF6B14dd249f5a0977F645436cC4f4095325'
-
-# set your receiving address where you want to receive your withdrawn Ethers from coinbase address.
-receiver_address = '0x22741e8eE26E83AaCBf098a31DE5af1b1231920e'
-
 # Set the address of your Geth Node
 GETH_HOST = 'http://localhost:8545'
 
 web3 = Web3(HTTPProvider(GETH_HOST))
+
+# set your receiving address where you want to receive your withdrawn Ethers from coinbase address.
+receiver_address = '0xB06cEF6B14dd249f5a0977F645436cC4f4095325'
+
+# set your coinbase address that you want to withdraw Ethers from.
+# For successful mining of transaction make sure this address is unlocked in your Geth Node.
+coinbase_address = web3.eth.coinbase
 
 
 def main():
@@ -28,9 +28,8 @@ def main():
         else:
             print("Gas Price: ", gasPrice)
             amount_to_send = calculateBalanceToSend(coinbase_balance, gasPrice)
-            gasPrice_bytes = gasPriceToBytes(gasPrice)
 
-            txHash = makeTransaction(amount_to_send, gasPrice_bytes)
+            txHash = makeTransaction(amount_to_send, gasPrice)
             print("Transaction has been successull. TxHash: ", txHash.hex())
     else:
         print("coinbase has zero balance")
@@ -53,12 +52,8 @@ def calculateBalanceToSend(amount, gasPrice):
     return amount - (web3.toWei(gasPrice, 'gwei') * 21000)
 
 
-def gasPriceToBytes(gasPrice):
-    return bytearray(struct.pack("f", gasPrice))
-
-
-def makeTransaction(amount_to_send, gasPrice_bytes):
-    return web3.eth.sendTransaction({'to': receiver_address, 'from': coinbase_address, 'value': amount_to_send, 'gas': 21000, 'gasPrice': web3.toHex(gasPrice_bytes)})
+def makeTransaction(amount_to_send, gasPrice):
+    return web3.eth.sendTransaction({'to': receiver_address, 'from': coinbase_address, 'value': amount_to_send, 'gas': 21000, 'gasPrice': web3.toWei(gasPrice, 'gwei')})
 
 
 def isGreaterThanZero(amount):
