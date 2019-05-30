@@ -3,8 +3,14 @@ from requests import get
 import json
 import struct
 
+# set your coinbase address that you want to withdraw Ethers from.
+# For successful mining of transaction make sure this address is unlocked in your Geth Node.
 coinbase_address = '0xB06cEF6B14dd249f5a0977F645436cC4f4095325'
+
+# set your receiving address where you want to receive your withdrawn Ethers from coinbase address.
 receiver_address = '0x22741e8eE26E83AaCBf098a31DE5af1b1231920e'
+
+# Set the address of your Geth Node
 GETH_HOST = 'http://localhost:8545'
 
 web3 = Web3(HTTPProvider(GETH_HOST))
