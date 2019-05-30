@@ -72,4 +72,5 @@ def isZero(amount):
     return amount == 0
 
 
-main()
+if __name__ == "__main__":
+    main()
