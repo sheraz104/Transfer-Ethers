@@ -9,6 +9,9 @@ GETH_HOST = 'http://localhost:8545'
 # web3 is initialized in main method
 web3 = None
 
+# Coinbase is set in main method
+coinbase_address = None
+
 # set your receiving address where you want to receive your withdrawn Ethers from coinbase address.
 receiver_address = '0xB06cEF6B14dd249f5a0977F645436cC4f4095325'
 
@@ -18,9 +21,9 @@ def main():
     global web3
     web3 = Web3(HTTPProvider(GETH_HOST))
 
-    # set your coinbase address that you want to withdraw Ethers from.
-    # For successful mining of transaction make sure this address is unlocked in your Geth Node.
+    global coinbase_address
     coinbase_address = web3.eth.coinbase
+
     coinbase_balance = getBalance(coinbase_address)
 
     if isGreaterThanZero(coinbase_balance):
@@ -30,7 +33,7 @@ def main():
         if isZero(gasPrice):
             print("Could not get gas price")
         else:
-            print("Gas Price: ", gasPrice)
+            print("Gas Price: ", gasPrice, " GWEI")
             amount_to_send = calculateBalanceToSend(coinbase_balance, gasPrice)
 
             txHash = makeTransaction(
